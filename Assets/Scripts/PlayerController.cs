@@ -4,6 +4,7 @@ using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using TMPro;
+using System;
 
 public class PlayerController : MonoBehaviour
 {
@@ -53,13 +54,17 @@ public class PlayerController : MonoBehaviour
         movementY = movementVector.y;
     }
 
-    // FixedUpdate is called once per fixed frame-rate frame.
-    private void FixedUpdate()
+    void Update()
     {
         if (Keyboard.current.spaceKey.wasPressedThisFrame)
         {
-            
+            Debug.Log("Keyboard was pressed");
         }
+    }
+
+    // FixedUpdate is called once per fixed frame-rate frame.
+    private void FixedUpdate()
+    {
         // Create a 3D movement vector using the X and Y inputs.
         Vector3 movement = new Vector3(movementX, 0.0f, movementY);
 
