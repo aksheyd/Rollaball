@@ -10,6 +10,8 @@ public class PlayerController : MonoBehaviour
 {
     // Rigidbody of the player.
     private Rigidbody rb;
+    private bool is_on_ground;
+
 
     // Variable to keep track of collected "PickUp" objects.
     private int count;
@@ -20,6 +22,7 @@ public class PlayerController : MonoBehaviour
 
     // Speed at which the player moves.
     public float speed = 0;
+    public float jumpForce = 0;
 
     // UI text component to display count of "PickUp" objects collected.
     public TextMeshProUGUI countText;
@@ -54,11 +57,30 @@ public class PlayerController : MonoBehaviour
         movementY = movementVector.y;
     }
 
+    void OnCollisionEnter(Collision collision)
+    {
+        // uses Players sphereCollider to check if its 
+        // hitting Ground layers mesh collider?
+        if (collision.gameObject.layer == LayerMask.NameToLayer("Ground"))
+        {
+            is_on_ground = true;
+        }
+    }
+
+    void OnCollisionExit(Collision collision)
+    {
+        if (collision.gameObject.layer == LayerMask.NameToLayer("Ground"))
+        {
+            is_on_ground = false;
+        }
+    }
+
     void Update()
     {
-        if (Keyboard.current.spaceKey.wasPressedThisFrame)
+        // Jumping logic
+        if (Keyboard.current.spaceKey.wasPressedThisFrame && is_on_ground)
         {
-            Debug.Log("Keyboard was pressed");
+            rb.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
         }
     }
 
