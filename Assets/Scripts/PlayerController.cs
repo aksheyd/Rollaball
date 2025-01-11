@@ -5,16 +5,19 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using TMPro;
 using System;
+using UnityEngine.SceneManagement;
 
 public class PlayerController : MonoBehaviour
 {
     // Rigidbody of the player.
     private Rigidbody rb;
     private bool is_on_ground;
+    private Transform tr;
 
 
     // Variable to keep track of collected "PickUp" objects.
     private int count;
+    private int totalPickUps;
 
     // Movement along X and Y axes.
     private float movementX;
@@ -23,6 +26,7 @@ public class PlayerController : MonoBehaviour
     // Speed at which the player moves.
     public float speed = 0;
     public float jumpForce = 0;
+    public float lowerBoundary = 0;
 
     // UI text component to display count of "PickUp" objects collected.
     public TextMeshProUGUI countText;
@@ -35,9 +39,11 @@ public class PlayerController : MonoBehaviour
     {
         // Get and store the Rigidbody component attached to the player.
         rb = GetComponent<Rigidbody>();
+        tr = GetComponent<Transform>();
 
         // Initialize count to zero.
         count = 0;
+        totalPickUps = GameObject.FindGameObjectsWithTag("PickUp").Length;
 
         // Update the count display.
         SetCountText();
@@ -87,6 +93,13 @@ public class PlayerController : MonoBehaviour
     // FixedUpdate is called once per fixed frame-rate frame.
     private void FixedUpdate()
     {
+        // if fall below the lowerboundary defined in game (usually -1.0f)
+        // reset da scene
+        if (tr.position.y < lowerBoundary) 
+        {
+            SceneManager.LoadScene("MiniGame", LoadSceneMode.Single);
+        }
+        
         // Create a 3D movement vector using the X and Y inputs.
         Vector3 movement = new Vector3(movementX, 0.0f, movementY);
 
@@ -118,7 +131,7 @@ public class PlayerController : MonoBehaviour
         countText.text = "Count: " + count.ToString();
 
         // Check if the count has reached or exceeded the win condition.
-        if (count >= 12)
+        if (count >= totalPickUps)
         {
             // Display the win text.
             winTextObject.SetActive(true);
